@@ -624,6 +624,36 @@
         canShoot = false; setTimeout(() => canShoot = true, 300);
     });
 
+    // --- 新增：手機觸控支援 (拖曳瞄準，放開射擊) ---
+    let isTouching = false;
+
+    canvas.addEventListener('touchstart', (e) => {
+        if (gameState !== 'playing') return;
+        e.preventDefault(); // 防止畫面滾動
+        isTouching = true;
+        const rect = canvas.getBoundingClientRect();
+        mouseX = (e.touches[0].clientX - rect.left) * (CANVAS_W / rect.width);
+        mouseY = (e.touches[0].clientY - rect.top) * (CANVAS_H / rect.height);
+    }, {passive: false});
+
+    canvas.addEventListener('touchmove', (e) => {
+        if (gameState !== 'playing' || !isTouching) return;
+        e.preventDefault(); // 防止畫面滾動
+        const rect = canvas.getBoundingClientRect();
+        mouseX = (e.touches[0].clientX - rect.left) * (CANVAS_W / rect.width);
+        mouseY = (e.touches[0].clientY - rect.top) * (CANVAS_H / rect.height);
+    }, {passive: false});
+
+    canvas.addEventListener('touchend', (e) => {
+        if (gameState !== 'playing' || !isTouching) return;
+        e.preventDefault();
+        isTouching = false;
+        if (!canShoot) return;
+        safePlaySound(shootSound);
+        arrows.push(new Arrow(PLAYER_X, PLAYER_Y, playerAngle, currentWeapon));
+        canShoot = false; setTimeout(() => canShoot = true, 300);
+    }, {passive: false});
+
     // --- 拖曳任務 ---
     let cardsMatched = 0;
     function initDragDropTask() {

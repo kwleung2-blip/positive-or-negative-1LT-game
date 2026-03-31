@@ -607,6 +607,10 @@
         location.reload();
     });
 
+    document.getElementById('playAgainBtn').addEventListener('click', () => {
+        location.reload();
+    });
+
     canvas.addEventListener('mousemove', (e) => {
         const rect = canvas.getBoundingClientRect();
         mouseX = (e.clientX - rect.left) * (CANVAS_W / rect.width);
